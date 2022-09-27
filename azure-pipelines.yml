@@ -1,0 +1,58 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+pool:
+  name: Windowsagent
+
+- task: SSH@0
+  inputs:
+    runOptions: 'inline'
+    inline: |
+      #!/bin/bash
+      curl -u $(presenter):$(PAT) --request DELETE "https://dev.azure.com/$(organization)/$(project)/_apis/build/definitions/$(buildDef)?api-version=5.0" && echo "$(organization) $(project) Build Definition $(buildDef) has been successfully deleted."
+      
+      PRESENTER=$(az account show | jq -r .user.name)
+      ORGANIZATION=ishuv1808
+      PROJECT=Task-CosmosDB
+      
+      echo "Please enter your Personal Access Token, followed by [ENTER] (Input will be hiden):"
+      read -s PAT
+      echo
+      echo "Please enter your Build Definition ID, followed by [ENTER]:"
+      read buildDef
+      echo 
+      
+      function presenter() 
+      {
+          local  presenter=$PRESENTER 
+          echo "$presenter"
+      } 
+      
+      function organization() 
+      {
+          local  organization=$ORGANIZATION
+          echo "$organization"
+      }
+      
+      function project() 
+      {
+          local  project=$PROJECT
+          echo "$project"
+      }
+      
+      function PAT() 
+      {
+          local  PAT=$PAT
+          echo "$PAT"
+      }
+      
+      function buildDef() 
+      {
+          local  buildDef=$buildDef
+          echo "$buildDef"
+      }
+   
